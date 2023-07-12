@@ -1,4 +1,5 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
+import { Account, Coin, CoinBalance, Offer, Wallet } from '../../app/entities';
 
 export const config: DataSourceOptions = {
   type: 'postgres',
@@ -7,10 +8,10 @@ export const config: DataSourceOptions = {
   database: process.env.DATABASE_NAME || 'crypto_offers',
   username: process.env.DATABASE_USER || 'postgres',
   password: process.env.DATABASE_PASSWORD || 'docker',
-  entities: [],
+  entities: [Account, Coin, CoinBalance, Offer, Wallet],
   logger: 'file',
   synchronize: false,
-  migrations: ['src/shared/typeorm/migrations/*.ts'],
+  migrations: ['dist/shared/typeorm/migrations/*.js'],
   // factories: [],
   // seeds: [],
 };
