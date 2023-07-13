@@ -8,7 +8,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { OfferService } from './offer.service';
-import { CreateOfferDto } from './dto/create-offer.dto';
+import { CreateOfferDto, QueryOffersDto } from './dto/offer.dto';
 import { Offer } from '../entities';
 
 @Controller('offers')
@@ -19,13 +19,13 @@ export class OfferController {
   create(
     @Body() createOfferDto: CreateOfferDto,
     @Query('walletId') walletId: number,
-  ): Promise<Offer> {
+  ) {
     return this.offerService.create(createOfferDto, walletId);
   }
 
   @Get()
-  findAll() {
-    return this.offerService.findAll();
+  findAll(@Query() query?: QueryOffersDto) {
+    return this.offerService.findAll(query.page, query.pageSize);
   }
 
   @Delete(':id')
