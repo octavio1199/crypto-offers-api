@@ -4,6 +4,7 @@ import { getEnvPath } from './common/helper/env.helper';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSourceOptions } from 'typeorm';
 import { config } from './shared/typeorm/db.config';
+import { OfferModule } from './app/offer/offer.module';
 
 const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
 
@@ -11,7 +12,7 @@ const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
   imports: [
     ConfigModule.forRoot({ envFilePath, isGlobal: true }),
     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
+      imports: [ConfigModule, OfferModule],
       useFactory: (): DataSourceOptions => config,
       inject: [ConfigService],
     }),
