@@ -9,6 +9,7 @@ import {
   CreateOfferDto,
   CreateOfferResponseDto,
   ListOffersResponseDto,
+  RemoveOfferResponseDto,
   ResponseOfferDto,
 } from './dto/offer.dto';
 import { Coin, CoinBalance, Offer, Wallet } from '../entities';
@@ -150,7 +151,10 @@ export class OfferService {
    * @throws ForbiddenException se o usuário não for o criador da oferta
    * @throws InternalServerErrorException em caso de erro interno do servidor
    */
-  public async remove(id: number, accountId: number) {
+  public async remove(
+    id: number,
+    accountId: number,
+  ): Promise<RemoveOfferResponseDto> {
     const offer = await this.offerRepository.findOne({
       where: { id },
       relations: ['seller', 'wallet'],

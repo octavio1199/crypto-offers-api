@@ -1,6 +1,5 @@
 import { DataSource } from 'typeorm';
 import { Account, Coin, CoinBalance, Wallet } from '../../../../app/entities';
-import { faker } from '@faker-js/faker';
 import { Seeder, SeederFactoryManager } from 'typeorm-extension';
 
 export class MainSeeder implements Seeder {
@@ -25,13 +24,22 @@ export class MainSeeder implements Seeder {
     await coinRepository.save(coins);
     const wallets = await walletFactory.saveMany(3);
 
-    const wallet = wallets[0];
-    wallet.account = accounts[0];
-    const coinBalance = await coinBalanceFactory.save({
-      coin: coins[0],
-      wallet: wallet,
-    });
-    await walletRepository.save(wallet);
-    await coinBalanceRepository.save(coinBalance);
+    for (let i = 0; i < wallets.length; i++) {
+      const wallet = wallets[i];
+      wallet.account = accounts[i];
+
+      const addedCoins: Coin[] = [];
+      for (const coin of coins) {
+        if (!addedCoins.some((addedCoin) => addedCoin.code === coin.code)) {
+          const coinBalance = await coinBalanceFactory.save({
+            coin: coin,
+            wallet: wallet,
+          });
+          await coinBalanceRepository.save(coinBalance);
+          addedCoins.push(coin);
+        }
+      }
+      await walletRepository.save(wallet);
+    }
   }
 }

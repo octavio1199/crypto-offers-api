@@ -73,3 +73,11 @@ export class ListOffersResponseDto {
   @ApiProperty()
   currentPage: number;
 }
+
+export class RemoveOfferResponseDto {
+  @ApiProperty()
+  success: boolean;
+
+  @ApiProperty()
+  message: string;
+}
