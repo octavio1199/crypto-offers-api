@@ -6,11 +6,9 @@ import {
   Param,
   Delete,
   Query,
-  ParseIntPipe,
 } from '@nestjs/common';
 import { OfferService } from './offer.service';
 import { CreateOfferDto, QueryOffersDto } from './dto/offer.dto';
-import { Offer } from '../entities';
 
 @Controller('offers')
 export class OfferController {

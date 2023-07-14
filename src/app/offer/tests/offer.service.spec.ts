@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Between, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { OfferService } from '../offer.service';
 import { Coin, CoinBalance, Offer, Wallet } from '../../entities';
 

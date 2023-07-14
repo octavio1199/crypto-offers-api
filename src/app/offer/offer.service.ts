@@ -163,13 +163,7 @@ export class OfferService {
       );
     }
 
-    const coinBalance = await this.coinBalanceRepository.findOne({
-      where: { coinId: offer.coinId, walletId: offer.walletId },
-    });
-    if (!coinBalance) throw new NotFoundException('Coin not found in wallet');
-
-    coinBalance.balance = Number(coinBalance.balance) + Number(offer.quantity);
-    await this.coinBalanceRepository.save(coinBalance);
+    await this.restoreCoinBalance(offer);
 
     try {
       await this.offerRepository.softDelete(id);
@@ -188,5 +182,31 @@ export class OfferService {
       coinId: offer.coinId,
       sellerAccountId: offer.sellerAccountId,
     };
+  }
+
+  private async restoreCoinBalance(offer: Offer): Promise<void> {
+    const coinBalance = await this.coinBalanceRepository.findOne({
+      where: { coinId: offer.coinId, walletId: offer.walletId },
+    });
+    if (!coinBalance) throw new NotFoundException('Coin not found in wallet');
+
+    coinBalance.balance = Number(coinBalance.balance) + Number(offer.quantity);
+    await this.coinBalanceRepository.save(coinBalance);
+  }
+
+  /**
+   * Rotina para resetar todas as ofertas ativas no final do dia
+   * @returns Promise vazia
+   */
+  async resetOffers() {
+    const offers = await this.offerRepository.find({
+      where: {
+        deletedAt: null,
+      },
+    });
+    for (const offer of offers) {
+      await this.restoreCoinBalance(offer);
+      await this.offerRepository.softDelete({ id: offer.id });
+    }
   }
 }
