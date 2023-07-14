@@ -105,10 +105,10 @@ describe('OfferService', () => {
       expect(walletRepository.findOne).toHaveBeenCalled();
       expect(coinBalanceRepository.save).toHaveBeenCalled();
       expect(offerRepository.save).toHaveBeenCalled();
-      expect(res.quantity).toBe(createOfferDto.quantity);
-      expect(res.unitPrice).toBe(createOfferDto.unitPrice);
-      expect(res.coinId).toBe(mockCoin.id);
-      expect(res.sellerAccountId).toBe(wallet.id);
+      expect(res.data.quantity).toBe(createOfferDto.quantity);
+      expect(res.data.unitPrice).toBe(createOfferDto.unitPrice);
+      expect(res.data.coinId).toBe(mockCoin.id);
+      expect(res.data.sellerAccountId).toBe(wallet.id);
     });
 
     it('should throw an error if coin is not found', async () => {

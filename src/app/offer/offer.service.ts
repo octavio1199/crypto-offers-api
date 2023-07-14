@@ -28,6 +28,14 @@ export class OfferService {
     private readonly walletRepository: Repository<Wallet>,
   ) {}
 
+  /**
+   * Cria uma nova oferta para venda de uma moeda
+   * @param createOfferDto - Objeto DTO com os dados da nova oferta
+   * @param walletId - ID da carteira associada à oferta
+   * @returns CreateOfferResponseDto - Objeto com o resultado da criação da oferta
+   * @throws NotFoundException se a moeda ou a carteira não forem encontradas
+   * @throws BadRequestException se não houver saldo suficiente na carteira
+   */
   public async create(
     createOfferDto: CreateOfferDto,
     walletId: number,
@@ -82,6 +90,12 @@ export class OfferService {
     return { success: true, data: this.mapToResponseDto(offer) };
   }
 
+  /**
+   * Retorna a lista de ofertas do dia atual, com opção de paginação
+   * @param page - Número da página (opcional)
+   * @param pageSize - Tamanho da página (opcional)
+   * @returns ListOffersResponseDto - Objeto com a lista de ofertas e informações de paginação
+   */
   public async findAll(
     page?: number,
     pageSize?: number,
@@ -127,6 +141,15 @@ export class OfferService {
     };
   }
 
+  /**
+   * Remove uma oferta existente, permitido apenas para o criador da oferta
+   * @param id - ID da oferta a ser removida
+   * @param accountId - ID da conta do usuário autenticado
+   * @returns Objeto com o resultado da remoção da oferta
+   * @throws NotFoundException se a oferta não for encontrada
+   * @throws ForbiddenException se o usuário não for o criador da oferta
+   * @throws InternalServerErrorException em caso de erro interno do servidor
+   */
   public async remove(id: number, accountId: number) {
     const offer = await this.offerRepository.findOne({
       where: { id },
