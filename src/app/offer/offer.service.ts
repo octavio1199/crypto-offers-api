@@ -1,7 +1,9 @@
 import {
   BadRequestException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import {
   CreateOfferDto,
@@ -125,8 +127,33 @@ export class OfferService {
     };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} offer`;
+  public async remove(id: number, accountId: number) {
+    const offer = await this.offerRepository.findOne({
+      where: { id },
+      relations: ['seller', 'wallet'],
+    });
+    if (!offer) throw new NotFoundException('Offer not found');
+
+    if (offer.sellerAccountId !== accountId) {
+      throw new UnauthorizedException(
+        'You are not allowed to delete this offer',
+      );
+    }
+
+    const coinBalance = await this.coinBalanceRepository.findOne({
+      where: { coinId: offer.coinId, walletId: offer.walletId },
+    });
+    if (!coinBalance) throw new NotFoundException('Coin not found in wallet');
+
+    coinBalance.balance = Number(coinBalance.balance) + Number(offer.quantity);
+    await this.coinBalanceRepository.save(coinBalance);
+
+    try {
+      await this.offerRepository.softDelete(id);
+      return { success: true, message: 'Offer deleted successfully' };
+    } catch (error) {
+      throw new InternalServerErrorException({ message: error.message });
+    }
   }
 
   private mapToResponseDto(offer: Offer): ResponseOfferDto {

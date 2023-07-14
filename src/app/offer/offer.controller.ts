@@ -6,6 +6,7 @@ import {
   Param,
   Delete,
   Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { OfferService } from './offer.service';
 import { CreateOfferDto, QueryOffersDto } from './dto/offer.dto';
@@ -29,7 +30,7 @@ export class OfferController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.offerService.remove(+id);
+  remove(@Param('id') id: string, @Query('accountId') accountId: string) {
+    return this.offerService.remove(+id, +accountId);
   }
 }
